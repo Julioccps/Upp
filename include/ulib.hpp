@@ -6,24 +6,24 @@
 #include <filesystem>
 #include <openssl/sha.h>
 #include <memory>
-#include <exceptions>
+#include <stdexcept>
 #include <unordered_map>
+#include <vector>
 
 namespace upl {
 class Upp {
-    public:
-        Upp();  // Constructor
-        ~Upp(); // Destructor
-        // 
+public:
+    Upp();
+    ~Upp();
 
-        // Functions
-        void init_repo(std::string name);        // Initialize Repository named <name>
-        void status();                           // Show tracked/untracked/modified files
-        void add(std::string* filepaths[]);      // Stage files
-        void commit(std::string msg);            // Creates commits
-        void log();                              // Show commit history
-        void branch(std::string name);           // Create a branch named <name>
-        void checkout(std::string branch_name);  // Changes to branch <branch_name>
-
-    }
+    void init_repo(const std::string& name);
+    void status();
+    void add(const std::vector<std::string>& filepaths);
+    void commit(const std::string& msg);
+    void log();
+    void branch(const std::string& name);
+    void checkout(const std::string& branch_name);
+};
 }
+
+#endif
