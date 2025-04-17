@@ -3,6 +3,12 @@
 
 #include <iostream>
 #include <string>
+#include <filesystem>
+#include <openssl/sha.h>
+#include <memory>
+#include <exceptions>
+#include <unordered_map>
+
 namespace upl {
 class Upp {
     public:
