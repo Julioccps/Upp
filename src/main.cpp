@@ -14,7 +14,7 @@ int main(int argc, char* argv[]){
                       << "\033[31mcommit -m\033[0m \"msg\" \033[1mCreate commits with \"msg\"\033[0m"
                       << "\033[31mlog\033[0m \033[1mShow commit history\033[0m"
                       << "\033[31mbranch\033[0m <name> \033[1mCreates a branch named <name>\033[0m"
-                      << "\033[31mcheckout\033[0m <branch> \033[1mChanges current branch to <branch>\033[0m"
+                      << "\033[31mcheckout\033[0m <branch> \033[1mChanges current branch to <branch>\033[0m";
         }
     }
     return 0;
