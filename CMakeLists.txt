@@ -1,4 +1,4 @@
-cmake_minimun_required(3.16)
+cmake_minimun_required(VERSION 3.16)
 project(upp)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -8,7 +8,7 @@ include_directories(include)
 
 file(GLOB LIB_SOURCES lib/*.cpp)
 
-add_library(ulibs STARIC ${LIB_SOURCES})
+add_library(upp_libs STARIC ${LIB_SOURCES})
 
 add_executable(upp src/main.cpp)
 
