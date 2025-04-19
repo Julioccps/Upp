@@ -21,7 +21,7 @@ public:
     void init_repo(const std::string& name);
     void status();
     void add(const std::vector<std::string>& filepaths);
-    void commit(const std::string& msg);
+    void commit(const std::string& message);
     void log();
     void branch(const std::string& name);
     void checkout(const std::string& branch_name);
@@ -32,9 +32,16 @@ private:
     std::string create_blob(const std::string &file_path);
     void update_index(const std::string& file_path, const std::string& hash);
     void write_file(std::string &file_path, const std::vector<unsigned char>& data);
+    void set_author(const std::string& author);
 
+    std::get_author();
     std::string read_file(std::string &file_path);
     sdt::string create_tree();
+    std::string create_commit(const std::string& tree_hash, 
+                              const std::string parent_hash,
+                              const std::string author,
+                              const std::string message);
+
     std::filesystem::path repo_path;
     std::string current_branch;
     std::vector<std::string> staging_area;

@@ -60,7 +60,19 @@ namespace upl {
         }    
     }
 
-    void Upp::commit(const std::string& msg){
+    void Upp::commit(){
+        std::string tree_hash = create_tree(const std::string& message);
+
+        std::string parent_hash;
+        if (std::filesystem::exists(".upp/commits")) {
+            parent_hash = read_file(".upp/commits");
+        }
+
+        std::string author = get_author();
+
+        std::string commit_hash = create_commit(tree_hash, parent_hash, author, message);
+
+        write_file(".upp/commits", commit_hash);
     }
 
     void Upp::log(){
@@ -125,6 +137,55 @@ namespace upl {
     	return tree_hash;
     }
 
+    std::string Upp::create_commit(const std::string tree_hash,
+                                   const std::string parent_hash, 
+                                   const std::string author, 
+                                   const std::string message){
+
+        std::ostringstream commit_content;
+    	commit_content << "tree " << tree_hash << "\n";
+
+    	if (!parent_hash.empty())
+        	commit_content << "parent " << parent_hash << "\n";
+
+    	commit_content << "author " << author << "\n";
+
+    	std::time_t now = std::time(nullptr);
+    	commit_content << "date " << now << "\n\n";
+
+    	commit_content << message << "\n";
+
+    	std::string content = commit_content.str();
+    	std::string header = "commit " + std::to_string(content.size()) + '\0';
+    	std::string full_commit = header + content;
+
+    	std::string commit_hash = hash_function(full_commit);
+
+    	std::string object_dir = ".upp/objects/" + commit_hash.substr(0, 2);
+    	std::string object_path = object_dir + "/" + commit_hash.substr(2);
+
+    	if (std::filesystem::exists(object_path))
+        	return commit_hash;
+
+    	std::filesystem::create_directories(object_dir);
+
+    	uLong sourceLen = full_commit.size();
+    	uLong destLen = compressBound(sourceLen);
+    	std::vector<Bytef> compressed(destLen);
+
+    	int res = compress(compressed.data(), &destLen,
+        	               reinterpret_cast<const Bytef*>(full_commit.data()), sourceLen);
+
+    	if (res != Z_OK)
+        	throw std::runtime_error("Compression error");
+
+    	compressed.resize(destLen);
+
+    	write_file(object_path, compressed);
+
+    	return commit_hash;
+    }
+
     std::string Upp::create_blob(const std::string &file_path){
         
         std::string content = read_file(file_path);
@@ -177,6 +238,27 @@ namespace upl {
 
         returnn ss.str();
 
+    }
+
+    void Upp::set_author(const std::string& author){
+        std::ofstream config(".upp/config");
+        if (!config)
+            throw std::runtime_error("Could not open .upp/config");
+
+        config << "author=" << author << "\n";
+    }
+    
+    std::string Upp::get_author(){
+        std::ifstream config_file(".upp/config");
+        if (!config_file)
+            return "unknown <unknown@localhost>";
+
+        std::string line;
+        while (std::getline(config_file, line)) {
+            if (line.rfind("author=", 0) == 0)
+                return line.substr(7);
+        }
+        return "unknown <unknown@localhost>";
     }
 
     std::string Upp::hash_function(const std::string content){
