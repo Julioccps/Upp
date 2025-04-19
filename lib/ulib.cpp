@@ -34,10 +34,30 @@ namespace upl {
     }
 
     void Upp::add(const std::vector<std::string>& filepaths){
-        for (const auto& path: filepaths){
-            std::string hash = create_blob(path);
-            update_index(path, hash);
+        std::map<std::string, std::string> index_entries;
+
+        if (std::filesystem::exists(".upp/index")) {
+            std::ifstream index_file(".upp/index");
+            std::string line;
+            while (std::getline(index_file, line)) {
+                std::istringstream iss(line);
+                std::string mode, type, hash, path;
+                iss >> mode >> type >> hash >> path;
+                index_entries[path] = hash;
+            }
         }
+
+        for (const auto& file_path : file_paths) {
+            std::string hash = create_blob(file_path);
+
+            if (index_entries[file_path] != hash) {
+                index_entries[file_path] = hash;
+            }
+        }
+        std::ofstream index_file(".upp/index");
+        for (const auto& [path, hash] : index_entries) {
+            index_file << "100644 blob " << hash << " " << path << "\n";
+        }    
     }
 
     void Upp::commit(const std::string& msg){
@@ -58,6 +78,53 @@ namespace upl {
     void Upp::decompress_blob(std::string &file_path){
     }
 
+    std::string Upp::create_tree(){
+        std::ifstream index_file(".upp/index");
+    	if (!index_file)
+        	throw std::runtime_error("It was not possible to open the index");
+
+    	std::ostringstream tree_content;
+    	std::string line;
+
+    	while (std::getline(index_file, line)) {
+        	std::istringstream iss(line);
+        	std::string mode, type, hash, path;
+        	iss >> mode >> type >> hash >> path;
+
+        	tree_content << mode << " " << type << " " << hash << "\t" << path << "\n";
+    	}
+
+    	std::string content = tree_content.str();
+    	std::string header = "tree " + std::to_string(content.size()) + '\0';
+    	std::string full_tree = header + content;
+
+    	std::string tree_hash = hash_function(full_tree);
+
+    	std::string object_dir = ".upp/objects/" + tree_hash.substr(0, 2);
+    	std::string object_path = object_dir + "/" + tree_hash.substr(2);
+
+    	if (std::filesystem::exists(object_path))
+        	return tree_hash;
+
+    	std::filesystem::create_directories(object_dir);
+
+    	uLong sourceLen = full_tree.size();
+    	uLong destLen = compressBound(sourceLen);
+    	std::vector<Bytef> compressed(destLen);
+
+    	int res = compress(compressed.data(), &destLen,
+                       reinterpret_cast<const Bytef*>(full_tree.data()), sourceLen);
+
+    	if (res != Z_OK)
+        	throw std::runtime_error("Compression error");
+
+	    compressed.resize(destLen);
+
+	    write_file(object_path, compressed);
+
+    	return tree_hash;
+    }
+
     std::string Upp::create_blob(const std::string &file_path){
         
         std::string content = read_file(file_path);
@@ -66,6 +133,12 @@ namespace upl {
         std::string full_content = header + content;
 
         std::string hash = hash_function(blob_content);
+            
+        std::string object_dir = ".upp/objects/" + hash.substr(0, 2);
+        std::string object_path = object_dir + "/" + hash.substr(2);
+        
+        if (std::filesystem::exists(object_path))
+            return hash;
 
         uLong sourceLen = full_content.size();
         uLong destLen = compressBound(sourceLen);
@@ -73,7 +146,7 @@ namespace upl {
 
         int res = compress(compressed.data(), &destLen,
                        reinterpret_cast<const Bytef*>(full_content.data()), sourceLen);
-        if (res != Z_OK) throw std::runtime_error("Erro na compressão");
+        if (res != Z_OK) throw std::runtime_error("Compression error");
 
         compressed.resize(destLen);
 

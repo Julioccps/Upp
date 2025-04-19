@@ -34,6 +34,7 @@ private:
     void write_file(std::string &file_path, const std::vector<unsigned char>& data);
 
     std::string read_file(std::string &file_path);
+    sdt::string create_tree();
     std::filesystem::path repo_path;
     std::string current_branch;
     std::vector<std::string> staging_area;
