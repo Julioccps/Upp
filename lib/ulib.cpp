@@ -60,7 +60,7 @@ namespace upl {
         }    
     }
 
-    void Upp::commit(){
+    void Upp::commit(const std::string& message){
         std::string tree_hash = create_tree(const std::string& message);
 
         std::string parent_hash;
