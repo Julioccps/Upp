@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <vector>
 #include <chrono>
+#include <zlib.h>
 
 namespace upl {
 class Upp {
@@ -26,11 +27,18 @@ public:
     void checkout(const std::string& branch_name);
 
 private:
+    void compress_blob(std::string &header, std::string &file_path);
+    void decompress_blob(std::string &file_path);
+    std::string create_blob(const std::string &file_path);
+    void update_index(const std::string& file_path, const std::string& hash);
+    void write_file(std::string &file_path, const std::vector<unsigned char>& data);
+
+    std::string read_file(std::string &file_path);
     std::filesystem::path repo_path;
     std::string current_branch;
     std::vector<std::string> staging_area;
-
-    std::string generate_commit_hash();
+    
+    std::string hash_function(const std::string &content);
 
     bool is_repo_initialized() const;
     bool load_config();
