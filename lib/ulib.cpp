@@ -5,7 +5,7 @@ namespace upl {
     Upp::Upp(): repo_path(""), current_branch(""){
         // Load info from a config file, if exists
     }
-    void Upp::init_repo(const std::string& name){
+    void Upp::init_repo(){
         repo_path = std::filesystem::current_path() / ".upl";
 
         if (is_repo_initialized()){
@@ -18,7 +18,7 @@ namespace upl {
         std::filesystem::create_directory(repo_path / "objects");
         
         std::ofstream config(repo_path / "config");
-        config << "repo_name=" << name << "\n";
+        config << "core.version=1" << "\n";
         config << "current_branch=main\n";
         config.close();
         

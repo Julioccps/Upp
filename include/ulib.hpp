@@ -18,7 +18,7 @@ public:
     Upp();
     ~Upp();
 
-    void init_repo(const std::string& name);
+    void init_repo();
     void status();
     void add(const std::vector<std::string>& filepaths);
     void commit(const std::string& message);
