@@ -6,7 +6,7 @@ namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]){
     upl::Upp upp;
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i< argc; ++i) {
         std::string arg = argv[i];
 
         if (arg == "--help"){
@@ -29,6 +29,10 @@ int main(int argc, char* argv[]){
         }
 
         else if (arg == "add"){
+            if (argc == i){
+                std::cerr << "Error: no file path given" << std::endl;
+                return -1;
+            }
             std::vector<std::string> file_paths;
             if (argv[i+1] != "." && argv[i+1] != "*"){
                 std::istringstream iss(argv[i+1]);
@@ -48,6 +52,31 @@ int main(int argc, char* argv[]){
             }
             upp.add(file_paths);
             i++;
+        }
+        else if (arg == "commit"){
+            if ((argc - i) < 1){
+                std::cerr << "Error: commit need -m and or -F to work" << std::endl;
+                return -1;
+            }
+            std::string narg = argv[i+1];
+            else if (narg != "-m" || narg != "-F" || (i - argc) < 2){
+                std::cerr << "Error: arguments not reconized or incomplete" << std::endl;
+                return -1;
+            }
+            for (int j = i + 1; j < argc; j++){
+                std::string aarg = argv[j];
+                if (narg == "-m"){
+                    upp.commit(aarg);
+                    return 0;
+                }
+                else if (narg == "-F"){
+                    std::vector<std::string> fp = {aarg};
+                    upp.add(p);
+                }
+            }
+        }
+        else if (arg == "log"){
+            upp.log();
         }
 
     }
