@@ -1,5 +1,5 @@
 # Upp
-Upp is a minimalist version control system inspired by git, it is beeing developed as a educational and personal project, in order to understand, in practice, how git and others VCS work, using hashes, blobs, trees and commits.
+Upp is a minimalist version control system inspired by git, it is being developed as a educational and personal project, in order to understand, in practice, how git and others VCS work, using hashes, blobs, trees and commits.
 ### Status
 Currently a work in progress, tho, some basic and secondary features are already implemented.
 - `init` Initializing the directory for the version control is already possible.
