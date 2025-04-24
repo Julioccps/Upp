@@ -1,5 +1,5 @@
 # Upp
-Upp is a minimalist version control system inspired by git, It is beeing developed as a educational and personal project, in order to understand, in practice, how git and others VCS work, using hashes, blobs, trees and commits.
+Upp is a minimalist version control system inspired by git, it is beeing developed as a educational and personal project, in order to understand, in practice, how git and others VCS work, using hashes, blobs, trees and commits.
 ### Status
 Currently a work in progress, tho, some basic and secondary features are already implemented.
 - `init` Initializing the directory for the version control is already possible.
@@ -14,4 +14,4 @@ Currently a work in progress, tho, some basic and secondary features are already
 - `bare` Hosting your own cloud for others to connect and acess your repositories.
 - `push` and `pull` Updating your repository, to date with other's changes or your own.
 ## Why the name Upp?
-The name isn't a acrynom for anything specific, it is just a quick thing to type, which was the priority when creating the name for the project. The origin was beacause of the name of where i study, *UEM* and the main programming language or the project *C++* or *CPP*, so there i goes UPP.
+The name isn't a acrynom for anything specific, it is just a quick thing to type, which was the priority when creating the name for the project. The origin was beacause of the name of where i study, *UEM* and the main programming language for the project *C++* or *CPP*, so there i goes UPP.
