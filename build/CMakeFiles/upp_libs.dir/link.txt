@@ -1,0 +1,2 @@
+/usr/bin/ar qc libupp_libs.a CMakeFiles/upp_libs.dir/lib/ulib.cpp.o
+/usr/bin/ranlib libupp_libs.a

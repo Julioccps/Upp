@@ -11,12 +11,13 @@
 #include <vector>
 #include <chrono>
 #include <zlib.h>
+#include <fstream>
+#include <map>
 
 namespace upl {
 class Upp {
 public:
     Upp();
-    ~Upp();
 
     void init_repo();
     void status();
@@ -34,9 +35,9 @@ private:
     void write_file(std::string &file_path, const std::vector<unsigned char>& data);
     void set_author(const std::string& author);
 
-    std::get_author();
-    std::string read_file(std::string &file_path);
-    sdt::string create_tree();
+    std::string get_author();
+    std::string read_file(const std::string &file_path);
+    std::string create_tree();
     std::string create_commit(const std::string& tree_hash, 
                               const std::string parent_hash,
                               const std::string author,

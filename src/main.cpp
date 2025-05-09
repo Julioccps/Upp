@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include "ulib.hpp"
+#include <ulib.hpp>
 
 namespace fs = std::filesystem;
 
@@ -36,6 +36,7 @@ int main(int argc, char* argv[]){
             std::vector<std::string> file_paths;
             if (argv[i+1] != "." && argv[i+1] != "*"){
                 std::istringstream iss(argv[i+1]);
+                std::string file;
                 while (iss >> file){
                     file_paths.push_back(file);
                 }
@@ -54,11 +55,11 @@ int main(int argc, char* argv[]){
             i++;
         }
         else if (arg == "commit"){
+            std::string narg = argv[i + 1];
             if ((argc - i) < 1){
                 std::cerr << "Error: commit need -m and or -F to work" << std::endl;
                 return -1;
             }
-            std::string narg = argv[i+1];
             else if (narg != "-m" || narg != "-F" || (i - argc) < 2){
                 std::cerr << "Error: arguments not reconized or incomplete" << std::endl;
                 return -1;
@@ -71,7 +72,7 @@ int main(int argc, char* argv[]){
                 }
                 else if (narg == "-F"){
                     std::vector<std::string> fp = {aarg};
-                    upp.add(p);
+                    upp.add(fp);
                 }
             }
         }

@@ -1,4 +1,4 @@
-#include "ulibs/ulib.hpp"
+#include "ulib.hpp"
 
 namespace upl {
 
@@ -9,7 +9,7 @@ namespace upl {
         repo_path = std::filesystem::current_path() / ".upl";
 
         if (is_repo_initialized()){
-            throw std::runtime_error("Repository already initialized here.\n")
+            throw std::runtime_error("Repository already initialized here.\n");
         }
 
         std::filesystem::create_directory(repo_path);
@@ -27,7 +27,7 @@ namespace upl {
 
         current_branch = "main";
 
-        std::cout << "Repository << name << "initialized with success.\n";
+        std::cout << "Repository initialized with success.\n" << std::endl;
     }
 
     void Upp::status(){ 
@@ -47,7 +47,7 @@ namespace upl {
             }
         }
 
-        for (const auto& file_path : file_paths) {
+        for (const auto& file_path : filepaths) {
             std::string hash = create_blob(file_path);
 
             if (index_entries[file_path] != hash) {
@@ -61,7 +61,7 @@ namespace upl {
     }
 
     void Upp::commit(const std::string& message){
-        std::string tree_hash = create_tree(const std::string& message);
+        std::string tree_hash = create_tree();
 
         std::string parent_hash;
         if (std::filesystem::exists(".upp/commits")) {
@@ -71,8 +71,10 @@ namespace upl {
         std::string author = get_author();
 
         std::string commit_hash = create_commit(tree_hash, parent_hash, author, message);
-
-        write_file(".upp/commits", commit_hash);
+        const std::vector<unsigned char> v(commit_hash.begin(), commit_hash.end());
+        std::string path = "/.upl/commits";
+        std::string& cmt_path = path;
+        write_file(cmt_path, v);
     }
 
     void Upp::log(){
@@ -81,7 +83,7 @@ namespace upl {
     void Upp::branch(const std::string& name){
     }
 
-    void Upp::checkouut(const std::string& branch_name){
+    void Upp::checkout(const std::string& branch_name){
     }
     
     void Upp::compress_blob(std::string& header, std::string &file_path){
@@ -137,7 +139,7 @@ namespace upl {
     	return tree_hash;
     }
 
-    std::string Upp::create_commit(const std::string tree_hash,
+    std::string Upp::create_commit(const std::string& tree_hash,
                                    const std::string parent_hash, 
                                    const std::string author, 
                                    const std::string message){
@@ -191,7 +193,6 @@ namespace upl {
         std::string content = read_file(file_path);
 
         std::string blob_content = "blob " + std::to_string(content.size()) + '\0';
-        std::string full_content = header + content;
 
         std::string hash = hash_function(blob_content);
             
@@ -201,20 +202,15 @@ namespace upl {
         if (std::filesystem::exists(object_path))
             return hash;
 
-        uLong sourceLen = full_content.size();
+        uLong sourceLen = blob_content.size();
         uLong destLen = compressBound(sourceLen);
         std::vector<Bytef> compressed(destLen);
 
         int res = compress(compressed.data(), &destLen,
-                       reinterpret_cast<const Bytef*>(full_content.data()), sourceLen);
+                       reinterpret_cast<const Bytef*>(blob_content.data()), sourceLen);
         if (res != Z_OK) throw std::runtime_error("Compression error");
 
         compressed.resize(destLen);
-
-        std::string object_dir = ".upp/objects/" + hash.substr(0, 2);
-        std::filesystem::create_directories(object_dir);
-
-        std::string object_path = object_dir + "/" + hash.substr(2);
 
         write_file(object_path, compressed);
 
@@ -227,16 +223,16 @@ namespace upl {
     }
 
     void Upp::write_file(std::string &file_path, const std::vector<unsigned char>& data){
-        std::ofstream out(path, std::ios::binary);
+        std::ofstream out(file_path, std::ios::binary);
         out.write(reinterpret_cast<const char*>(data.data()), data.size());
     }
 
-    std::string Upp::read_file(std::string &file_path){
-        std::ifstream in(file_path, std::ios::binary)
+    std::string Upp::read_file(const std::string &file_path){
+        std::ifstream in(file_path, std::ios::binary);
         std::ostringstream ss;
         ss << in.rdbuf();
 
-        returnn ss.str();
+        return ss.str();
 
     }
 
@@ -261,7 +257,7 @@ namespace upl {
         return "unknown <unknown@localhost>";
     }
 
-    std::string Upp::hash_function(const std::string content){
+    std::string Upp::hash_function(const std::string& content){
 
         auto now = std::chrono::system_clock::now();
         auto now_time = std::chrono::system_clock::to_time_t(now);
@@ -270,7 +266,11 @@ namespace upl {
         data.append(content);
 
         unsigned char hash[SHA256_DIGEST_LENGTH];
-        SHA256(reinterpret_cast<const unsigned char*>(data.c_str()), data.size(), hash);
+        SHA256_CTX sha256;
+        SHA256_Init(&sha256);
+        SHA256_Update(&sha256, data.c_str(), data.size());
+        SHA256_Final(hash, &sha256);
+
         std::stringstream ss;
 
         for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i){
@@ -279,19 +279,14 @@ namespace upl {
         return ss.str();
     }
 
-    bool Upp::is_repo_initialized(){
-        bool q = false;
-        
-        if (std::filesystem::exists("/.npl"))
-            q = true;
-        
-        return q
+    bool Upp::is_repo_initialized() const {
+        return std::filesystem::exists(repo_path);
     }
 
     bool Upp::load_config(){
     }
 
-    bool Upp::save-conig(){
+    bool Upp::save_config() const {
     }
 
 }
