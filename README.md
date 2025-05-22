@@ -3,9 +3,9 @@ Upp is a minimalist version control system inspired by git, it is being develope
 ### Status
 Currently a work in progress, tho, some basic and secondary features are already implemented.
 - `init` Initializing the directory for the version control is already possible.
-- `add` Creating a blob for each file is already possible.
-- `commit` Commiting and creating a tree for the file's blobs is already possible.
 ### Features to expect
+- `add` Creating a blob for each file.
+- `commit` Commiting and creating a tree for the file's blobs.
 - `log` Showing commit history.
 - `status` Showing if the repository is up to date with the other instances of the repository.
 - `branch` and `checkout` Branching, creating and changing branches.
