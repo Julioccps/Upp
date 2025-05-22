@@ -97,6 +97,8 @@ upp: CMakeFiles/upp.dir/src/main.cpp.o
 upp: CMakeFiles/upp.dir/build.make
 upp: CMakeFiles/upp.dir/compiler_depend.ts
 upp: libupp_libs.a
+upp: /usr/lib/libz.so
+upp: /usr/lib/libcrypto.so
 upp: CMakeFiles/upp.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/julio/Desktop/c++/upp/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable upp"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/upp.dir/link.txt --verbose=$(VERBOSE)

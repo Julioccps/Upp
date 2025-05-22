@@ -2,6 +2,8 @@
 #include <string>
 #include <ulib.hpp>
 
+#define VCS_PATH ".upl"
+
 namespace fs = std::filesystem;
 
 int main(int argc, char* argv[]){
@@ -9,15 +11,15 @@ int main(int argc, char* argv[]){
     for (int i = 1; i< argc; ++i) {
         std::string arg = argv[i];
 
-        if (arg == "--help"){
+        if (arg == "--help" || arg == "-h"){
             std::cout << "Usage:\n"
-                      << "\033[31minit\033[0m \033[1mInitializes repository\033[0m"
-                      << "\033[31status\033[0m \033[1mShows tracked/untracked/modified files\033[0m"
-                      << "\033[31madd\033[0m <file> \033[1mStage file(s)| use '.' for all\033[0m"
-                      << "\033[31mcommit -m\033[0m \"msg\" \033[1mCreate commits with \"msg\"\033[0m"
-                      << "\033[31mlog\033[0m \033[1mShow commit history\033[0m"
-                      << "\033[31mbranch\033[0m <name> \033[1mCreates a branch named <name>\033[0m"
-                      << "\033[31mcheckout\033[0m <branch> \033[1mChanges current branch to <branch>\033[0m";
+                      << "\033[31minit\033[0m \033[1mInitializes repository\033[0m\n"
+                      << "\033[31status\033[0m \033[1mShows tracked/untracked/modified files\033[0m\n"
+                      << "\033[31madd\033[0m <file> \033[1mStage file(s)| use '.' for all\033[0m\n"
+                      << "\033[31mcommit -m\033[0m \"msg\" \033[1mCreate commits with \"msg\"\033[0m\n"
+                      << "\033[31mlog\033[0m \033[1mShow commit history\033[0m\n"
+                      << "\033[31mbranch\033[0m <name> \033[1mCreates a branch named <name>\033[0m\n"
+                      << "\033[31mcheckout\033[0m <branch> \033[1mChanges current branch to <branch>\033[0m\n";
         }
 
         else if (arg == "init"){
@@ -45,7 +47,7 @@ int main(int argc, char* argv[]){
                 for (const auto& entry : fs::directory_iterator(fs::current_path())) {
                     if (fs::is_regular_file(entry.status())) {
                         std::string nome = entry.path().filename().string();
-                        if (nome != ".upl") {
+                        if (nome != VCS_PATH) {
                             file_paths.push_back(nome);
                         }
                     }
@@ -60,7 +62,7 @@ int main(int argc, char* argv[]){
                 std::cerr << "Error: commit need -m and or -F to work" << std::endl;
                 return -1;
             }
-            else if (narg != "-m" || narg != "-F" || (i - argc) < 2){
+            else if (narg != "-m" && narg != "-F" && (i - argc) < 2){
                 std::cerr << "Error: arguments not reconized or incomplete" << std::endl;
                 return -1;
             }

@@ -1,1 +1,1 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/upp.dir/link.d CMakeFiles/upp.dir/src/main.cpp.o -o upp  libupp_libs.a
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/upp.dir/link.d CMakeFiles/upp.dir/src/main.cpp.o -o upp  libupp_libs.a /usr/lib/libz.so /usr/lib/libcrypto.so

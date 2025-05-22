@@ -1,12 +1,12 @@
 #include "ulib.hpp"
-
+#define VCS_PATH ".upl"
 namespace upl {
 
     Upp::Upp(): repo_path(""), current_branch(""){
         // Load info from a config file, if exists
     }
     void Upp::init_repo(){
-        repo_path = std::filesystem::current_path() / ".upl";
+        repo_path = std::filesystem::current_path() / VCS_PATH;
 
         if (is_repo_initialized()){
             throw std::runtime_error("Repository already initialized here.\n");
@@ -36,8 +36,8 @@ namespace upl {
     void Upp::add(const std::vector<std::string>& filepaths){
         std::map<std::string, std::string> index_entries;
 
-        if (std::filesystem::exists(".upp/index")) {
-            std::ifstream index_file(".upp/index");
+        if (std::filesystem::exists(VCS_PATH "/index")) {
+            std::ifstream index_file(VCS_PATH "/index");
             std::string line;
             while (std::getline(index_file, line)) {
                 std::istringstream iss(line);
@@ -54,7 +54,7 @@ namespace upl {
                 index_entries[file_path] = hash;
             }
         }
-        std::ofstream index_file(".upp/index");
+        std::ofstream index_file(VCS_PATH "/index");
         for (const auto& [path, hash] : index_entries) {
             index_file << "100644 blob " << hash << " " << path << "\n";
         }    
@@ -64,15 +64,15 @@ namespace upl {
         std::string tree_hash = create_tree();
 
         std::string parent_hash;
-        if (std::filesystem::exists(".upp/commits")) {
-            parent_hash = read_file(".upp/commits");
+        if (std::filesystem::exists(VCS_PATH "/commits")) {
+            parent_hash = read_file(VCS_PATH "/commits");
         }
 
         std::string author = get_author();
 
         std::string commit_hash = create_commit(tree_hash, parent_hash, author, message);
         const std::vector<unsigned char> v(commit_hash.begin(), commit_hash.end());
-        std::string path = "/.upl/commits";
+        std::string path = std::string(VCS_PATH) + "/commits";
         std::string& cmt_path = path;
         write_file(cmt_path, v);
     }
@@ -93,7 +93,7 @@ namespace upl {
     }
 
     std::string Upp::create_tree(){
-        std::ifstream index_file(".upp/index");
+        std::ifstream index_file(VCS_PATH "/index");
     	if (!index_file)
         	throw std::runtime_error("It was not possible to open the index");
 
@@ -114,7 +114,7 @@ namespace upl {
 
     	std::string tree_hash = hash_function(full_tree);
 
-    	std::string object_dir = ".upp/objects/" + tree_hash.substr(0, 2);
+    	std::string object_dir = std::string(VCS_PATH) + "/objects/" + tree_hash.substr(0, 2);
     	std::string object_path = object_dir + "/" + tree_hash.substr(2);
 
     	if (std::filesystem::exists(object_path))
@@ -163,7 +163,7 @@ namespace upl {
 
     	std::string commit_hash = hash_function(full_commit);
 
-    	std::string object_dir = ".upp/objects/" + commit_hash.substr(0, 2);
+    	std::string object_dir = std::string(VCS_PATH) + "/objects/" + commit_hash.substr(0, 2);
     	std::string object_path = object_dir + "/" + commit_hash.substr(2);
 
     	if (std::filesystem::exists(object_path))
@@ -196,7 +196,7 @@ namespace upl {
 
         std::string hash = hash_function(blob_content);
             
-        std::string object_dir = ".upp/objects/" + hash.substr(0, 2);
+        std::string object_dir = std::string(VCS_PATH) + "/objects/" + hash.substr(0, 2);
         std::string object_path = object_dir + "/" + hash.substr(2);
         
         if (std::filesystem::exists(object_path))
@@ -218,7 +218,7 @@ namespace upl {
     }
 
     void update_index(const std::string& file_path, const std::string& hash){
-        std::ofstream index_file(".upp/index", std::ios::app);
+        std::ofstream index_file(VCS_PATH "/index", std::ios::app);
         index_file << hash << " " << file_path << "\n";
     }
 
@@ -237,15 +237,15 @@ namespace upl {
     }
 
     void Upp::set_author(const std::string& author){
-        std::ofstream config(".upp/config");
+        std::ofstream config(VCS_PATH "/config");
         if (!config)
-            throw std::runtime_error("Could not open .upp/config");
+            throw std::runtime_error("Could not open .upl/config");
 
         config << "author=" << author << "\n";
     }
     
     std::string Upp::get_author(){
-        std::ifstream config_file(".upp/config");
+        std::ifstream config_file(VCS_PATH "/config");
         if (!config_file)
             return "unknown <unknown@localhost>";
 
