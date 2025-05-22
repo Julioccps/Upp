@@ -2,7 +2,7 @@
 
 ## Core Features
 
-- [ ] `init` — Initialize repository  
+- [x] `init` — Initialize repository  
 - [ ] `status` — Show tracked/untracked/modified files  
 - [ ] `add <file>` — Stage files  
 - [ ] `commit -m "msg"` — Create commits  
