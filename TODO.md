@@ -50,4 +50,10 @@
 
 ## Bugs
 
-- No Bugs
+- Add multiple files at once
+- Add all files
+- Commit basic
+- Commit without add
+- Add non existent file
+- Empty commit message
+- Object Creation
