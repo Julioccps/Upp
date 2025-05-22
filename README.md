@@ -14,4 +14,4 @@ Currently a work in progress, tho, some basic and secondary features are already
 - `bare` Hosting your own cloud for others to connect and acess your repositories.
 - `push` and `pull` Updating your repository, to date with other's changes or your own.
 ## Why the name Upp?
-The name isn't a acrynom for anything specific, it is just a quick thing to type, which was the priority when creating the name for the project. The origin was beacause of the name of where i study, *UEM* and the main programming language for the project *C++* or *CPP*, so there i goes UPP.
+The name isn't a acrynom for anything specific, it is just a quick thing to type, which was the priority when creating the name for the project. The origin was beacause of the name of where i study, *UEM* and the main programming language for the project *C++* or *CPP*, so there it goes UPP.
